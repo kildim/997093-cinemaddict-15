@@ -7,3 +7,6 @@ env:
   browser: true
 
 extends: 'htmlacademy/vanilla'
+
+ignorePatterns: ["temp.js", "**/vendor/*.js"]
+
