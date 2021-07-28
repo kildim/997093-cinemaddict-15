@@ -1,7 +1,7 @@
 # Проект «Киноман»
 
 * Студент: [Дмитрий Килин](https://up.htmlacademy.ru/ecmascript/15/user/997093).
-* Наставник: `Неизвестно`.
+* Наставник: [Даниил Царёв](https://htmlacademy.ru/profile/id945835).
 
 ---
 
