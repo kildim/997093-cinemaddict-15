@@ -1,4 +1,4 @@
-import {generateFilmsList, generateExtraFilmsList} from '../helpers/films-lists.js';
+import {generateFilmsList, generateExtraFilmsList} from '../helpers/film-lists.js';
 
 export const createFilmsTemplate = () => (
   `<section class="films">
