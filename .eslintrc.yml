@@ -8,5 +8,4 @@ env:
 
 extends: 'htmlacademy/vanilla'
 
-ignorePatterns: ["temp.js", "**/vendor/*.js"]
 
