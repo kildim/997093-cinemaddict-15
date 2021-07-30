@@ -1,5 +1,7 @@
+import {getMockFilmsNumber} from '../mocks/mockFilms.js';
+
 export const createFooterStatisticsTemplate = () => (
-  '  <section class="footer__statistics">\n' +
-  '    <p>130 291 movies inside</p>\n' +
-  '  </section>'
+  `<section class="footer__statistics">
+    <p>${getMockFilmsNumber()} movies inside</p>
+  </section>`
 );

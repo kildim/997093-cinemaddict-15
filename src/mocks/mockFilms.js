@@ -1,4 +1,4 @@
-const filmData = {
+const filmMock = {
   title: 'The Dance of Life',
   rating: '8.3',
   info: {
@@ -12,11 +12,9 @@ const filmData = {
 
   comments: '5 comments',
 };
+const filmsNumber = '130 291';
 
-const getFilm = () => {
-  const film = {};
-  Object.assign(film, filmData);
-  return film;
-};
+const getMockFilm = () => filmMock;
+const getMockFilmsNumber = () => filmsNumber;
 
-export {getFilm};
+export {getMockFilm, getMockFilmsNumber};
