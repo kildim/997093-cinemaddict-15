@@ -1,7 +1,5 @@
-import {getMockFilmsNumber} from '../mocks/mockFilms.js';
-
-export const createFooterStatisticsTemplate = () => (
+export const createFooterStatisticsTemplate = (films) => (
   `<section class="footer__statistics">
-    <p>${getMockFilmsNumber()} movies inside</p>
+    <p>${films.length} movies inside</p>
   </section>`
 );
