@@ -102,8 +102,11 @@ const getRandomDate = (minYear, maxYear) => {
   const year = String(getRandomInteger(minYear, maxYear));
   const month = String(getRandomInteger(1,12));
   const day = String(getRandomInteger(1, dayjs(`${year}-${month}-01`).daysInMonth()));
+  const hours = String(getRandomInteger(0,23));
+  const minutes = String(getRandomInteger(0,59));
+  const seconds = String(getRandomInteger(0,59));
 
-  return dayjs(`${year}-${month}-${day}`).format('YYYY-MM-DDTHH:mm:ssZ');
+  return dayjs(`${year}-${month}-${day} ${hours}:${minutes}:${seconds}`);
 };
 const getRandomDescription = () => {
   const MAX_DESCRIPTION_LENGTH = 5;
@@ -125,8 +128,7 @@ const getCommentMock = () => ({
   'id': commentId.next().value,
   'author': getRandomAuthor(),
   'comment': getRandomComment(),
-  'date': '2021-08-04T17:10:32.554Z',
-  // 'date': getRandomDate(2021, 2021),
+  'date': getRandomDate(2021, 2021),
   'emotion': getRandomEmotion(),
 });
 const getMockUser = () => ({

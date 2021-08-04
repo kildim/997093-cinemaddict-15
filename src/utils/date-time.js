@@ -11,7 +11,8 @@ const formatDate = (date) => dayjs(date).format('D MMMM YYYY');
 const calculateDateRepresentation = (date) => {
   const currentDate = dayjs();
   const commentDate = dayjs(date);
-  return dayjs.duration(commentDate.diff(currentDate)).humanize(true);
+  return dayjs(commentDate).fromNow();
+  // return dayjs.duration(commentDate.diff(currentDate)).humanize(true);
 };
 
 export {formatTime, formatDate, calculateDateRepresentation};
