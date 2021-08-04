@@ -18,4 +18,6 @@ render(siteMainElement, createFilmsTemplate(), 'beforeend');
 render(siteFooterElement, createFooterStatisticsTemplate(), 'beforeend');
 render(siteFooterElement, createFilmDetailsTemplate(), 'afterend');
 
+// ЭТУ СТРОКУ Я УДАЛЮ В PR module1-task3 !
+
 
