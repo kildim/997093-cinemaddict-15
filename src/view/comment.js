@@ -1,15 +1,7 @@
-import {getEmojiPath} from '../constants/emotions.js';
-import {calculateDateRepresentation} from '../utils/date-time.js';
-
-const parseData = (data = {}) => ({
-  author: data['author'] || '',
-  commentText: data['comment'] || '',
-  date: calculateDateRepresentation(data['date']) || '',
-  emoji: getEmojiPath(data['emotion']),
-});
+import {parseComment} from '../utils/adapters';
 
 export const createCommentTemplate = (comment) => {
-  const {author, commentText, date, emoji} = parseData(comment);
+  const {author, commentText, date, emoji} = parseComment(comment);
 
   return `
     <li class="film-details__comment">

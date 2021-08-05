@@ -8,11 +8,6 @@ dayjs.locale('ru');
 
 const formatTime = (time) => dayjs(time).format('H[h] m[m]');
 const formatDate = (date) => dayjs(date).format('D MMMM YYYY');
-const calculateDateRepresentation = (date) => {
-  const currentDate = dayjs();
-  const commentDate = dayjs(date);
-  return dayjs(commentDate).fromNow();
-  // return dayjs.duration(commentDate.diff(currentDate)).humanize(true);
-};
+const calculateDateRepresentation = (date) => dayjs(date).fromNow();
 
 export {formatTime, formatDate, calculateDateRepresentation};

@@ -1,23 +1,8 @@
-import {formatTime} from '../utils/date-time.js';
-import {truncateDescription, extractFirstGenre} from '../helpers/film-card-helper.js';
-import {DEFAULT_POSTER} from '../constants/default-poster';
-
-const parseData = (filmData) => {
-  const filmInfo = filmData['film_info'];
-
-  return  {
-    title: filmInfo['title'] || '',
-    rating: filmInfo['total_rating'] || '',
-    genre: extractFirstGenre(filmInfo['genre']) || '',
-    poster: filmInfo['poster'] || DEFAULT_POSTER,
-    duration: formatTime(filmInfo['runtime']),
-    description: truncateDescription(filmInfo['description']),
-  };
-};
+import {parseFilmCard} from '../utils/adapters.js';
 
 export const createFilmCardTemplate = (filmData = {}) => {
 
-  const {title, rating, description, poster, genre, duration} = parseData(filmData);
+  const {title, rating, description, poster, genre, duration} = parseFilmCard(filmData);
 
   return `<article class="film-card">
       <h3 class="film-card__title">${title}</h3>

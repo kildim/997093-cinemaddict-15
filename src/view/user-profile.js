@@ -1,7 +1,5 @@
-import {DEFAULT_AVATAR} from '../constants/default-avatar.js';
-
 export const createUserProfileTemplate = (user = {}) => {
-  const {avatar: avatar = DEFAULT_AVATAR} = user;
+  const {avatar: avatar} = user;
 
   return`<section class="header__profile profile">
      <p class="profile__rating">Movie Buff</p>

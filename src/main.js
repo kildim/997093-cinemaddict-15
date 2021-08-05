@@ -3,7 +3,7 @@ import {createMenuTemplate} from './view/menu.js';
 import {createFilmCardTemplate} from './view/film-card.js';
 import {createFooterStatisticsTemplate} from './view/footer-statistics.js';
 import {createFilmDetailsTemplate} from  './view/film-details.js';
-import {getStats} from './helpers/main-helpers.js';
+import {getStats} from './utils/statistics.js';
 import {createFilmsContentTemplate} from './view/films-content.js';
 import {createCommentsListTemplate} from './view/comments-list.js';
 import {createNewCommentTemplate} from './view/new-comment.js';
@@ -63,8 +63,8 @@ const MOCK_SELECTED_FILM = films[1];
 render(siteFooterElement, createFilmDetailsTemplate(MOCK_SELECTED_FILM), RenderPlace.AFTER_END);
 
 const commentsElement = document.querySelector('.film-details__comments-wrap');
-render(commentsElement, createCommentsHeader(MOCK_SELECTED_FILM));
-render(commentsElement, createCommentsListTemplate(MOCK_SELECTED_FILM));
+render(commentsElement, createCommentsHeader(MOCK_SELECTED_FILM.comments.length));
+render(commentsElement, createCommentsListTemplate(MOCK_SELECTED_FILM.comments));
 render(commentsElement, createNewCommentTemplate());
 
 

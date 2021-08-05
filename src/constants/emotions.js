@@ -1,6 +1,4 @@
-const EMOJIS_PATH = './images/emoji/';
-
 const EMOTIONS = ['smile', 'sleeping', 'puke', 'angry'];
-const getEmojiPath = (emotion) => `${EMOJIS_PATH}${emotion}.png`;
+const getEmojiPath = (emotion) => `images/emoji/${emotion}.png`;
 
 export {EMOTIONS, getEmojiPath};

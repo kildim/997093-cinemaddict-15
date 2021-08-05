@@ -1,36 +1,15 @@
-import {genGenreCell, getActiveClass} from '../helpers/film-details-helper.js';
-import {stringifyArrayByComma} from '../utils/datatypes-manipulations.js';
-import {formatDate, formatTime} from '../utils/date-time.js';
-import {DEFAULT_POSTER} from '../constants/default-poster';
+import {parseFilmDetails} from '../utils/adapters.js';
 
-const parseData = (filmData) => {
-  const filmInfo = filmData['film_info'];
-  const userDetails = filmData['user_details'];
-  return  {
-    poster:  filmInfo['poster'] || DEFAULT_POSTER,
-    ageRating: filmInfo['age_rating'] || '',
-    title: filmInfo['title'] ||  '',
-    alternativeTitle: filmInfo['alternative_title'] || '',
-    totalRating: filmInfo['total_rating'] || '',
-    director: filmInfo['director'] || '',
-    writers: stringifyArrayByComma(filmInfo['writers']) || '',
-    actors: stringifyArrayByComma(filmInfo['actors']) || '',
-    releaseDate: formatDate(filmInfo['release']['date']) || '',
-    runtime: formatTime(filmInfo['runtime']) || '',
-    releaseCountry: filmInfo['release']['release_country'] || '',
-    genre: filmInfo['genre'] || [],
-    description: filmInfo['description'] || [],
-    watchList: userDetails['watchlist'] || false,
-    watched: userDetails['already_watched'] || false,
-    favorite: userDetails['favorite'] || false,
-  };
-};
+const renderGenres = (genres) => genres.map((genre) => (`
+    <span class="film-details__genre">${genre}</span>
+  `)).join('').trim();
+const getActiveClass = (condition) => (condition ? 'film-details__control-button--active' : '');
 
-export const createFilmDetailsTemplate = (filmData = {}) => {
+export const createFilmDetailsTemplate = (film = {}) => {
   const  {
     poster, ageRating, title, alternativeTitle, totalRating, director, writers, actors, releaseDate,
-    runtime, releaseCountry, genre, description, watchList, watched, favorite,
-  } = parseData(filmData);
+    runtime, releaseCountry, genres, description, watchList, watched, favorite,
+  } = parseFilmDetails(film);
 
   return `<section class="film-details">
      <form class="film-details__inner" action="" method="get">
@@ -85,7 +64,7 @@ export const createFilmDetailsTemplate = (filmData = {}) => {
                 <tr class="film-details__row">
                   <td class="film-details__term">Genres</td>
                   <td class="film-details__cell">
-                    ${genGenreCell(genre)}
+                    ${renderGenres(genres)}
                   </td>
                 </tr>
               </table>
