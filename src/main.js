@@ -12,15 +12,14 @@ import {createCommentsHeader} from './view/comments-header.js';
 const FILMS_LIST_DISPLAY_LIMIT = 5;
 let filmsListShownMarker = 0;
 
-import {getMockFilms, getMockUser} from './mocks/mock-films.js';
+import {getMockFilms} from './mocks/mock-films.js';
 
-const user = getMockUser();
 const films = getMockFilms();
 const stats = getStats(films);
 
-const getNumberOfWatched = (films) => {
+const getNumberOfWatched = (movies) => {
   let counter = 0;
-  for (const film of films) {if (film['user_details']['already_watched']) {counter++;}};
+  for (const film of movies) {if (film['user_details']['already_watched']) {counter++;}}
   return counter;
 };
 const getUserRank = (count) => {
