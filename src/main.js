@@ -18,6 +18,22 @@ const user = getMockUser();
 const films = getMockFilms();
 const stats = getStats(films);
 
+const getNumberOfWatched = (films) => {
+  let counter = 0;
+  for (const film of films) {if (film['user_details']['already_watched']) {counter++;}};
+  return counter;
+};
+const getUserRank = (count) => {
+  if (count > 20) {
+    return 'Movie buff';
+  } else if (count > 10) {
+    return 'Fan';
+  } else if (count > 0) {
+    return 'Novice';
+  }
+  return '';
+};
+
 const RenderPlace = {
   BEFORE_END: 'beforeend',
   AFTER_END: 'afterend',
@@ -42,7 +58,7 @@ const getTopRatedList = (list) => (list.slice(0, 2));
 const getMostCommentedList = (list) =>  (list.slice(2, 4));
 
 
-render(siteHeaderElement, createUserProfileTemplate(user));
+render(siteHeaderElement, createUserProfileTemplate(getUserRank(getNumberOfWatched(films))));
 render(siteMainElement, createMenuTemplate(stats));
 render(siteMainElement, createFilmsContentTemplate());
 

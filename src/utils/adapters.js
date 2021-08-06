@@ -1,6 +1,5 @@
 import {calculateDateRepresentation, formatDate, formatTime} from './date-time.js';
 import {getEmojiPath} from '../constants/emotions.js';
-import {DEFAULT_POSTER} from '../constants/default-poster.js';
 
 const MAX_DESCRIPTION_LENGTH = 139;
 
@@ -23,7 +22,7 @@ const parseFilmCard = (filmData) => {
     title: filmInfo['title'] || '',
     rating: filmInfo['total_rating'] || '',
     genre: extractFirstGenre(filmInfo['genre']) || '',
-    poster: filmInfo['poster'] || DEFAULT_POSTER,
+    poster: filmInfo['poster'] || '',
     duration: formatTime(filmInfo['runtime']),
     description: truncateDescription(filmInfo['description']),
   };
@@ -33,7 +32,7 @@ const parseFilmDetails = (filmData) => {
   const filmInfo = filmData['film_info'];
   const userDetails = filmData['user_details'];
   return  {
-    poster:  filmInfo['poster'] || DEFAULT_POSTER,
+    poster:  filmInfo['poster'] || '',
     ageRating: filmInfo['age_rating'] || '',
     title: filmInfo['title'] ||  '',
     alternativeTitle: filmInfo['alternative_title'] || '',
