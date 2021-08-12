@@ -1,20 +1,20 @@
-const RENDER_PLACE = {
+const RenderPlace = {
   BEFORE_END: 'beforeend',
   AFTER_END: 'after',
 };
 
-const renderElement = (container, element, place = RENDER_PLACE.BEFORE_END) => {
+const renderElement = (container, element, place = RenderPlace.BEFORE_END) => {
   switch (place) {
-    case RENDER_PLACE.AFTER_END:
+    case RenderPlace.AFTER_END:
       container.after(element);
       break;
-    case RENDER_PLACE.BEFORE_END:
+    case RenderPlace.BEFORE_END:
       container.append(element);
       break;
   }
 };
 
-const renderTemplate = (container, template, place = RENDER_PLACE.BEFORE_END) =>
+const renderTemplate = (container, template, place = RenderPlace.BEFORE_END) =>
   container.insertAdjacentHTML(place, template);
 
 const createElement = (template) => {
@@ -33,4 +33,4 @@ const getRandomInteger = (a = 0, b = 1) => {
   return Math.floor(lower + Math.random() * (upper - lower + 1));
 };
 
-export {getRandomInteger, renderTemplate, createElement, RENDER_PLACE, renderElement};
+export {getRandomInteger, renderTemplate, createElement, RenderPlace, renderElement};

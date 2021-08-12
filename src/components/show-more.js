@@ -1,16 +1,12 @@
-import {createElement, renderElement} from '../utils/utils.js';
+import {createElement} from '../utils/utils.js';
 
 export default class ShowMore {
-  constructor(managedList, container) {
-    this._managedList = managedList;
-    this._container = container;
+  constructor(onclickCallBack) {
     this._element = createElement(this.getTemplate());
-    function onclickEventHandler(list, button) {
-      return function () {
-        if (list.renderNextChunk()) {button.setAttribute('hidden', '');}
-      };
-    }
-    this._element.addEventListener('click', onclickEventHandler(this._managedList, this._element));
+    this._element.addEventListener('click', () => {
+      if (onclickCallBack()) {this._element.setAttribute('hidden', '');}
+    });
+
   }
 
   _createShowMoreTemplate() {
@@ -19,10 +15,6 @@ export default class ShowMore {
 
   getTemplate()  {
     return this._createShowMoreTemplate();
-  }
-
-  render() {
-    renderElement(this._container, this._element);
   }
 
   getElement() {

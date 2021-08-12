@@ -7,12 +7,9 @@ export default class FilmCard {
     this._element = createElement(this.getTemplate());
     this._filmDetails = filmDetails;
 
-    function onclickEventHandler(details, film) {
-      return function () {details.showDetail(film);};
-    }
-    this._element.querySelector('img').addEventListener('click', onclickEventHandler(this._filmDetails, this._filmData));
-    this._element.querySelector('.film-card__title').addEventListener('click', onclickEventHandler(this._filmDetails, this._filmData));
-    this._element.querySelector('.film-card__comments').addEventListener('click', onclickEventHandler(this._filmDetails, this._filmData));
+    this._element.querySelector('img').addEventListener('click', () => {this._filmDetails.showDetail(this._filmData);});
+    this._element.querySelector('.film-card__title').addEventListener('click', () => {this._filmDetails.showDetail(this._filmData);});
+    this._element.querySelector('.film-card__comments').addEventListener('click', () => {this._filmDetails.showDetail(this._filmData);});
   }
 
   _createFilmCardTemplate()  {

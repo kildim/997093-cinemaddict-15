@@ -132,8 +132,7 @@ const getMockUser = () => ({
   'avatar': `${AVATAR}`,
 });
 
-const MOCK_COMMENTS_NUMBER = getRandomInteger(0, 5);
-const getMockComments = () => new Array(MOCK_COMMENTS_NUMBER).fill('').map(getCommentMock);
+const getMockComments = () => new Array(getRandomInteger(0, 5)).fill('').map(getCommentMock);
 
 const getFilmMock = () => ({
   'id': filmId.next().value,

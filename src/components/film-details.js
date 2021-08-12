@@ -10,13 +10,6 @@ const getActiveClass = (condition) => (condition ? 'film-details__control-button
 export default  class FilmDetails {
   constructor() {
     this._element = createElement(this.getTemplate());
-    this._onClickCloseButtonHandler = function (filmDetails) {
-      return function () {
-        while (filmDetails.firstChild) {
-          filmDetails.removeChild(filmDetails.firstChild);
-        }
-      };
-    };
   }
 
   _createFilmDetailsTemplate() {
@@ -109,7 +102,11 @@ export default  class FilmDetails {
 
   showDetail(film) {
     this._element.innerHTML =  this._createFormTemplate(film);
-    this._element.querySelector('.film-details__close-btn').addEventListener('click', this._onClickCloseButtonHandler(this._element));
+    this._element.querySelector('.film-details__close-btn').addEventListener('click', () => {
+      while (this._element.firstChild) {
+        this._element.removeChild(this._element.firstChild);
+      }
+    });
   }
 
   getTemplate()  {
