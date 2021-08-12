@@ -4,7 +4,7 @@ export default class ShowMore {
   constructor(onclickCallBack) {
     this._element = createElement(this.getTemplate());
     this.hide = function () {
-      this._element.setAttribute('hidden', '')
+      this._element.setAttribute('hidden', '');
     };
     this._element.addEventListener('click',  () => {if (onclickCallBack()) {this.hide();} });
 
