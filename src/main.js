@@ -1,70 +1,81 @@
-import {createUserProfileTemplate} from './view/user-profile.js';
-import {createMenuTemplate} from './view/menu.js';
-import {createFilmCardTemplate} from './view/film-card.js';
+import 'core-js/stable';
+import 'regenerator-runtime/runtime';
+
+import {renderTemplate, renderElement, RenderPlace} from './utils/utils.js';
+import UserProfileView from './components/user-profile';
+import MenuView from './components/menu.js';
+import SortView from './components/sort.js';
+import FilmsContentView from './components/films-content.js';
+import CardsList from './components/cards-list.js';
+import ShowMore from './components/show-more.js';
+import FilmDetailsView from './components/film-details.js';
+import FilmCardView from './components/film-card.js';
+
+
 import {createFooterStatisticsTemplate} from './view/footer-statistics.js';
-import {createFilmDetailsTemplate} from  './view/film-details.js';
 import {getStats} from './utils/statistics.js';
-import {createFilmsContentTemplate} from './view/films-content.js';
-import {createCommentsListTemplate} from './view/comments-list.js';
-import {createNewCommentTemplate} from './view/new-comment.js';
-import {createCommentsHeader} from './view/comments-header.js';
+import {getMockFilms} from './mocks/mock-films.js';
+
 
 const FILMS_LIST_DISPLAY_LIMIT = 5;
-let filmsListShownMarker = 0;
+const TOP_RATED_LIST_DISPLAY_LIMIT = 2;
+const MOST_COMMENTED_LIST_DISPLAY_LIMIT = 2;
 
-import {getMockFilms, getMockUser} from './mocks/mock-films.js';
-
-const user = getMockUser();
 const films = getMockFilms();
 const stats = getStats(films);
 
-const RenderPlace = {
-  BEFORE_END: 'beforeend',
-  AFTER_END: 'afterend',
+const getTopRatedList = (list) => (list.slice().sort((first, second) => second['film_info']['total_rating'] - first['film_info']['total_rating']));
+const getMostCommentedList = (list) =>  (list.slice().sort((first, second)=> second['comments'].length - first['comments'].length));
+const getNumberOfWatched = (movies) => {
+  let counter = 0;
+  for (const film of movies) {if (film['user_details']['already_watched']) {counter++;}}
+  return counter;
 };
+
 
 const siteHeaderElement = document.querySelector('.header');
 const siteMainElement = document.querySelector('.main');
 const siteFooterElement = document.querySelector('.footer');
 
-const render = (container, template, place = RenderPlace.BEFORE_END) =>
-  container.insertAdjacentHTML(place, template);
-const renderCardsList = (container, cardsList) =>
-  cardsList.forEach((card) => render(container, createFilmCardTemplate(card)));
-const renderFilmsList = (container, buttonShowMore) => {
-  const lastShownMarker = filmsListShownMarker + FILMS_LIST_DISPLAY_LIMIT;
-  const additionCards = films.slice(filmsListShownMarker, lastShownMarker);
-  renderCardsList(container, additionCards);
-  filmsListShownMarker = lastShownMarker;
-  if (filmsListShownMarker >= films.length) {buttonShowMore.setAttribute('hidden', '');}
+renderElement(siteHeaderElement, new UserProfileView(getNumberOfWatched(films)).getElement());
+renderElement(siteMainElement, new MenuView (stats).getElement());
+renderElement(siteMainElement, new SortView().getElement());
+renderElement(siteMainElement, new FilmsContentView().getElement());
+
+const [filmsList, topRatedList, mostCommentedList] = document.querySelectorAll('.films-list');
+
+const filmDetails = new FilmDetailsView();
+renderElement(siteFooterElement, filmDetails.getElement(), RenderPlace.AFTER_END);
+
+const filmCardsList = new CardsList();
+renderElement(filmsList, filmCardsList.getElement());
+
+let cardsListTailMarker = 0;
+
+const renderChunk = (chunk, container) => {
+  chunk.forEach((card) => renderElement(container, new FilmCardView(card, filmDetails).getElement()));
 };
-const getTopRatedList = (list) => (list.slice(0, 2));
-const getMostCommentedList = (list) =>  (list.slice(2, 4));
+const renderNextChunk  = function () {
+  const lastMarker = cardsListTailMarker + FILMS_LIST_DISPLAY_LIMIT;
+  const nextChunk = films.slice(cardsListTailMarker, lastMarker);
+  renderChunk(nextChunk, filmCardsList.getElement());
+  cardsListTailMarker = lastMarker;
+  return cardsListTailMarker >= films.length;
+};
 
+renderNextChunk();
+renderElement(filmsList, new ShowMore(renderNextChunk).getElement());
 
-render(siteHeaderElement, createUserProfileTemplate(user));
-render(siteMainElement, createMenuTemplate(stats));
-render(siteMainElement, createFilmsContentTemplate());
+const TOP_RATED_LIST  = getTopRatedList(films).slice(0, TOP_RATED_LIST_DISPLAY_LIMIT);
+const filmTopRatedCardsList = new CardsList();
+renderElement(topRatedList, filmTopRatedCardsList.getElement());
+renderChunk(TOP_RATED_LIST, filmTopRatedCardsList.getElement());
 
-const showMoreElement = document.querySelector('.films-list__show-more');
+const MOST_COMMENTED_LIST  = getMostCommentedList(films).slice(0, MOST_COMMENTED_LIST_DISPLAY_LIMIT);
+const filmMostCommentedCardsList = new CardsList();
+renderElement(mostCommentedList, filmMostCommentedCardsList.getElement());
+renderChunk(MOST_COMMENTED_LIST, filmMostCommentedCardsList.getElement());
 
-const [filmsList, topRatedList, mostCommentedList] = document.querySelectorAll('.films-list__container');
-renderFilmsList(filmsList, showMoreElement);
-
-const clickShowMoreHandler = (list, buttonElement) => () => renderFilmsList(list, buttonElement);
-showMoreElement.addEventListener('click', clickShowMoreHandler(filmsList, showMoreElement));
-
-renderCardsList(topRatedList, getTopRatedList(films));
-renderCardsList(mostCommentedList, getMostCommentedList(films));
-
-render(siteFooterElement, createFooterStatisticsTemplate(films));
-
-const MOCK_SELECTED_FILM = films[1];
-render(siteFooterElement, createFilmDetailsTemplate(MOCK_SELECTED_FILM), RenderPlace.AFTER_END);
-
-const commentsElement = document.querySelector('.film-details__comments-wrap');
-render(commentsElement, createCommentsHeader(MOCK_SELECTED_FILM.comments.length));
-render(commentsElement, createCommentsListTemplate(MOCK_SELECTED_FILM.comments));
-render(commentsElement, createNewCommentTemplate());
+renderTemplate(siteFooterElement, createFooterStatisticsTemplate(films));
 
 

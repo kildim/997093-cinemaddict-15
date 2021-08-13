@@ -2,7 +2,7 @@ import {getRandomInteger} from '../utils/utils.js';
 import {EMOTIONS} from '../constants/emotions.js';
 import dayjs from 'dayjs';
 
-const FILM_MOCKS_NUMBER = 17;
+const FILM_MOCKS_NUMBER = 12;
 const AGE_RATINGS = ['0+', '6+', '12+', '16+', '18+'];
 const TITLES = [
   'The Dance of Life',
@@ -132,8 +132,7 @@ const getMockUser = () => ({
   'avatar': `${AVATAR}`,
 });
 
-const MOCK_COMMENTS_NUMBER = getRandomInteger(0, 5);
-const getMockComments = () => new Array(MOCK_COMMENTS_NUMBER).fill('').map(getCommentMock);
+const getMockComments = () => new Array(getRandomInteger(0, 5)).fill('').map(getCommentMock);
 
 const getFilmMock = () => ({
   'id': filmId.next().value,

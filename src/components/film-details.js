@@ -1,3 +1,4 @@
+import {createElement} from '../utils/utils.js';
 import {parseFilmDetails} from '../utils/adapters.js';
 
 const renderGenres = (genres) => genres.map((genre) => (`
@@ -5,13 +6,24 @@ const renderGenres = (genres) => genres.map((genre) => (`
   `)).join('').trim();
 const getActiveClass = (condition) => (condition ? 'film-details__control-button--active' : '');
 
-export const createFilmDetailsTemplate = (film = {}) => {
-  const  {
-    poster, ageRating, title, alternativeTitle, totalRating, director, writers, actors, releaseDate,
-    runtime, releaseCountry, genres, description, watchList, watched, favorite,
-  } = parseFilmDetails(film);
 
-  return `<section class="film-details">
+export default  class FilmDetails {
+  constructor() {
+    this._element = createElement(this.getTemplate());
+  }
+
+  _createFilmDetailsTemplate() {
+    return '<section class="film-details"></section>';
+  }
+
+  _createFormTemplate(filmData) {
+    const {poster, ageRating, title, alternativeTitle, totalRating, director,
+      writers, actors, releaseDate, runtime, releaseCountry, genres,
+      description, watchList, watched, favorite,
+      // comments,
+    } = parseFilmDetails(filmData);
+
+    return `
      <form class="film-details__inner" action="" method="get">
         <div class="film-details__top-container">
           <div class="film-details__close">
@@ -85,5 +97,31 @@ export const createFilmDetailsTemplate = (film = {}) => {
           </section>
         </div>
      </form>
-   </section>`;
-};
+`;
+  }
+
+  showDetail(film) {
+    this._element.innerHTML =  this._createFormTemplate(film);
+    this._element.querySelector('.film-details__close-btn').addEventListener('click', () => {
+      while (this._element.firstChild) {
+        this._element.removeChild(this._element.firstChild);
+      }
+    });
+  }
+
+  getTemplate()  {
+    return this._createFilmDetailsTemplate();
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

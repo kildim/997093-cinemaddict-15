@@ -10,6 +10,9 @@
     "start": "webpack-dev-server --open"
   },
   "devDependencies": {
+    "@babel/core": "7.15.0",
+    "@babel/preset-env": "7.15.0",
+    "babel-loader": "8.2.2",
     "css-loader": "5.2.7",
     "eslint": "7.31.0",
     "eslint-config-htmlacademy": "4.0.2",
@@ -24,8 +27,18 @@
   "dependencies": {
     "chart.js": "2.9.4",
     "chartjs-plugin-datalabels": "0.7.0",
+    "core-js": "3.16.0",
     "dayjs": "1.10.6",
     "flatpickr": "4.6.9",
-    "he": "1.2.0"
+    "he": "1.2.0",
+    "regenerator-runtime": "0.13.9"
+  },
+  "eslintConfig": {
+    "env": {
+      "es2021": true
+    },
+    "parserOptions": {
+      "ecmaVersion": 12
+    }
   }
 }

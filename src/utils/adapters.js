@@ -1,8 +1,34 @@
 import {calculateDateRepresentation, formatDate, formatTime} from './date-time.js';
 import {getEmojiPath} from '../constants/emotions.js';
-import {DEFAULT_POSTER} from '../constants/default-poster.js';
 
 const MAX_DESCRIPTION_LENGTH = 139;
+const BLANK_FILM_DATA = {
+  'id': 0,
+  'comments': [],
+  'film_info': {
+    'title': '',
+    'alternative_title': '',
+    'total_rating': '',
+    'age_rating': '',
+    'poster': '',
+    'director': '',
+    'writers': [],
+    'actors': [],
+    'release': {
+      'date': '',
+      'release_country': '',
+    },
+    'runtime': '',
+    'genre': '',
+    'description': '',
+  },
+  'user_details': {
+    'watchlist': '',
+    'already_watched': '',
+    'watching_date': '',
+    'favorite': '',
+  },
+};
 
 const truncateDescription = (description) => description.length > MAX_DESCRIPTION_LENGTH ? `
   ${description.slice(0, MAX_DESCRIPTION_LENGTH)}...` : description;
@@ -23,9 +49,10 @@ const parseFilmCard = (filmData) => {
     title: filmInfo['title'] || '',
     rating: filmInfo['total_rating'] || '',
     genre: extractFirstGenre(filmInfo['genre']) || '',
-    poster: filmInfo['poster'] || DEFAULT_POSTER,
+    poster: filmInfo['poster'] || '',
     duration: formatTime(filmInfo['runtime']),
     description: truncateDescription(filmInfo['description']),
+    comments: filmData['comments'],
   };
 };
 
@@ -33,7 +60,7 @@ const parseFilmDetails = (filmData) => {
   const filmInfo = filmData['film_info'];
   const userDetails = filmData['user_details'];
   return  {
-    poster:  filmInfo['poster'] || DEFAULT_POSTER,
+    poster:  filmInfo['poster'] || '',
     ageRating: filmInfo['age_rating'] || '',
     title: filmInfo['title'] ||  '',
     alternativeTitle: filmInfo['alternative_title'] || '',
@@ -49,8 +76,9 @@ const parseFilmDetails = (filmData) => {
     watchList: userDetails['watchlist'] || false,
     watched: userDetails['already_watched'] || false,
     favorite: userDetails['favorite'] || false,
+    comments: filmData['comments'],
   };
 };
 
-export {parseComment, parseFilmCard, parseFilmDetails};
+export {parseComment, parseFilmCard, parseFilmDetails, BLANK_FILM_DATA};
 
