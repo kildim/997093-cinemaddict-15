@@ -36,7 +36,7 @@ const getNumberOfWatched = (movies) => {
 };
 
 
-let siteState = new SiteState();
+const siteState = new SiteState();
 siteState.setState(STATES['all']);
 if (films.length > 0) {siteState.setState(STATES['has films']);}
 
