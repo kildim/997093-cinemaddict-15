@@ -110,7 +110,6 @@ export default  class FilmDetails {
   showDetail(film) {
     this._element.innerHTML =  this._createFormTemplate(film);
     this._element.querySelector('.film-details__close-btn').addEventListener('click', this._onCloseClick);
-    this._element.addEventListener('keydown', this._onEscKeyDown);
   }
 
   getTemplate()  {
