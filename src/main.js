@@ -10,15 +10,13 @@ import CardsList from './components/cards-list.js';
 import ShowMore from './components/show-more.js';
 import FilmDetailsView from './components/film-details.js';
 import FilmCardView from './components/film-card.js';
-import {STATES} from './constants/states.js';
+import Enum from './classes/enum.js';
 
 
 import {createFooterStatisticsTemplate} from './view/footer-statistics.js';
 import {createEmptyAllMooviesTemplate} from './view/empty-all-movies.js';
 import {getStats} from './utils/statistics.js';
 import {getMockFilms} from './mocks/mock-films.js';
-import SiteState from './utils/site-state.js';
-
 
 const FILMS_LIST_DISPLAY_LIMIT = 5;
 const TOP_RATED_LIST_DISPLAY_LIMIT = 2;
@@ -36,23 +34,21 @@ const getNumberOfWatched = (movies) => {
 };
 
 
-const siteState = new SiteState();
-siteState.setState(STATES['all']);
-if (films.length > 0) {siteState.setState(STATES['has films']);}
+const FILTER_MODE = new Enum({all: 0, whatchlist: 1, favorites: 2, history: 3});
+const filter = FILTER_MODE.all;
 
 const siteHeaderElement = document.querySelector('.header');
 const siteMainElement = document.querySelector('.main');
 const siteFooterElement = document.querySelector('.footer');
 
-
-if (siteState.hasState(STATES['has films'])) {
+if (films.length > 0) {
   renderElement(siteHeaderElement, new UserProfileView(getNumberOfWatched(films)).getElement());
 }
 renderElement(siteMainElement, new MenuView (stats).getElement());
 renderElement(siteMainElement, new SortView().getElement());
 
-if (siteState.hasState(STATES['all'])) {
-  if (siteState.hasState(STATES['has films'])) {
+if (filter === FILTER_MODE.all) {
+  if (films.length > 0 ) {
     renderElement(siteMainElement, new FilmsContentView().getElement());
 
     const [filmsList, topRatedList, mostCommentedList] = document.querySelectorAll('.films-list');
