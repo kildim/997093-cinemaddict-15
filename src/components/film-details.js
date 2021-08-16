@@ -10,10 +10,18 @@ const getActiveClass = (condition) => (condition ? 'film-details__control-button
 export default  class FilmDetails {
   constructor() {
     this._element = createElement(this.getTemplate());
+
+    this._onCloseClick = this.clearContent.bind(this);
   }
 
   _createFilmDetailsTemplate() {
     return '<section class="film-details"></section>';
+  }
+
+  clearContent()  {
+    while (this._element.firstChild) {
+      this._element.removeChild(this._element.firstChild);
+    }
   }
 
   _createFormTemplate(filmData) {
@@ -100,13 +108,10 @@ export default  class FilmDetails {
 `;
   }
 
+
   showDetail(film) {
     this._element.innerHTML =  this._createFormTemplate(film);
-    this._element.querySelector('.film-details__close-btn').addEventListener('click', () => {
-      while (this._element.firstChild) {
-        this._element.removeChild(this._element.firstChild);
-      }
-    });
+    this._element.querySelector('.film-details__close-btn').addEventListener('click', this._onCloseClick);
   }
 
   getTemplate()  {
