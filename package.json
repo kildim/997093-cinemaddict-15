@@ -8,7 +8,7 @@
     "test": "npm run eslint",
     "build": "webpack --mode development",
     "start": "webpack-dev-server --open",
-    "jest": "jest"
+    "jest": "jest --coverage"
   },
   "devDependencies": {
     "@babel/core": "7.15.0",
