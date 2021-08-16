@@ -7,7 +7,8 @@
     "eslint": "eslint src/",
     "test": "npm run eslint",
     "build": "webpack --mode development",
-    "start": "webpack-dev-server --open"
+    "start": "webpack-dev-server --open",
+    "jest": "jest"
   },
   "devDependencies": {
     "@babel/core": "7.15.0",
@@ -16,6 +17,7 @@
     "css-loader": "5.2.7",
     "eslint": "7.31.0",
     "eslint-config-htmlacademy": "4.0.2",
+    "jest": "27.0.6",
     "style-loader": "2.0.0",
     "webpack": "4.44.2",
     "webpack-cli": "3.3.12",
