@@ -1,4 +1,3 @@
-import {createElement} from '../utils/utils.js';
 import {parseFilmDetails} from '../utils/adapters.js';
 import Abstract from '../classes/abstract.js';
 
