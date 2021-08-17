@@ -1,8 +1,8 @@
-import {createElement} from '../utils/utils.js';
+import Abstract from '../classes/abstract.js';
 
-export default class CardsList {
+export default class CardsList extends Abstract {
   constructor() {
-    this._element = createElement(this.getTemplate());
+    super();
   }
 
   get element() {
@@ -18,15 +18,15 @@ export default class CardsList {
     return this._createCardsListChunkTemplate();
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
+  // getElement() {
+  //   if (!this._element) {
+  //     this._element = createElement(this.getTemplate());
+  //   }
+  //
+  //   return this._element;
+  // }
 
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
-  }
+  // removeElement() {
+  //   this._element = null;
+  // }
 }

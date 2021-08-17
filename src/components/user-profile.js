@@ -1,12 +1,15 @@
 import {createElement} from '../utils/utils.js';
+import Abstract from '../classes/abstract.js';
 
 const createUserProfileTemplate = (rank) => `<section class="header__profile profile">
      <p class="profile__rating">${rank}</p>
      <img class="profile__avatar" src='images/bitmap@2x.png' alt="Avatar" width="35" height="35">
    </section>`;
 
-export default class UserProfile {
+export default class UserProfile extends Abstract {
+
   constructor(rank = '') {
+    super();
     this._rank = rank;
     this._element = null;
   }
