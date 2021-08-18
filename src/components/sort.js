@@ -1,6 +1,6 @@
-import {createElement} from '../utils/utils.js';
+import Abstract from '../classes/abstract.js';
 
-export default class Sort {
+export default class Sort extends Abstract {
 
   _createSortTemplate() {
     return `<ul class="sort">
@@ -13,17 +13,4 @@ export default class Sort {
   getTemplate()  {
     return this._createSortTemplate();
   }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
-  }
-
 }

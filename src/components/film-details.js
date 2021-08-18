@@ -1,5 +1,5 @@
-import {createElement} from '../utils/utils.js';
 import {parseFilmDetails} from '../utils/adapters.js';
+import Abstract from '../classes/abstract.js';
 
 const renderGenres = (genres) => genres.map((genre) => (`
     <span class="film-details__genre">${genre}</span>
@@ -7,10 +7,10 @@ const renderGenres = (genres) => genres.map((genre) => (`
 const getActiveClass = (condition) => (condition ? 'film-details__control-button--active' : '');
 
 
-export default  class FilmDetails {
+export default  class FilmDetails extends Abstract{
   constructor() {
-    this._element = createElement(this.getTemplate());
-
+    super();
+    this.showDetail = this._showDetail.bind(this);
     this._onCloseClick = this.clearContent.bind(this);
   }
 
@@ -109,24 +109,12 @@ export default  class FilmDetails {
   }
 
 
-  showDetail(film) {
+  _showDetail(film) {
     this._element.innerHTML =  this._createFormTemplate(film);
     this._element.querySelector('.film-details__close-btn').addEventListener('click', this._onCloseClick);
   }
 
   getTemplate()  {
     return this._createFilmDetailsTemplate();
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

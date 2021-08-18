@@ -1,15 +1,25 @@
+import Abstract from '../classes/abstract.js';
+
 const RenderPlace = {
   BEFORE_END: 'beforeend',
   AFTER_END: 'after',
 };
 
-const renderElement = (container, element, place = RenderPlace.BEFORE_END) => {
+const render = (container, child, place = RenderPlace.BEFORE_END) => {
+  if (container instanceof Abstract) {
+    container = container.getElement();
+  }
+
+  if (child instanceof Abstract) {
+    child = child.getElement();
+  }
+
   switch (place) {
     case RenderPlace.AFTER_END:
-      container.after(element);
+      container.prepend(child);
       break;
     case RenderPlace.BEFORE_END:
-      container.append(element);
+      container.append(child);
       break;
   }
 };
@@ -33,4 +43,4 @@ const getRandomInteger = (a = 0, b = 1) => {
   return Math.floor(lower + Math.random() * (upper - lower + 1));
 };
 
-export {getRandomInteger, renderTemplate, createElement, RenderPlace, renderElement};
+export {getRandomInteger, renderTemplate, createElement, RenderPlace, render};

@@ -1,7 +1,9 @@
-import {createElement} from '../utils/utils.js';
+import Abstract from '../classes/abstract.js';
 
-export default class Menu {
+export default class Menu extends Abstract{
   constructor(stats) {
+    super();
+
     const {
       watchList: watchList = '0',
       history: history = '0',
@@ -43,17 +45,4 @@ export default class Menu {
   getTemplate()  {
     return this._createMenuTemplate();
   }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
-  }
-
 }

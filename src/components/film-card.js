@@ -1,15 +1,24 @@
 import {BLANK_FILM_DATA, parseFilmCard} from '../utils/adapters.js';
-import {createElement} from '../utils/utils.js';
+import Abstract from '../classes/abstract.js';
 
-export default class FilmCard {
-  constructor(filmData = BLANK_FILM_DATA, filmDetails) {
+export default class FilmCard extends Abstract {
+  constructor(filmData = BLANK_FILM_DATA) {
+    super();
     this._filmData= filmData;
-    this._element = createElement(this.getTemplate());
-    this._filmDetails = filmDetails;
+    this._callback = {};
+    this._clickHandler = this._clickHandler.bind(this);
+  }
 
-    this._element.querySelector('img').addEventListener('click', () => {this._filmDetails.showDetail(this._filmData);});
-    this._element.querySelector('.film-card__title').addEventListener('click', () => {this._filmDetails.showDetail(this._filmData);});
-    this._element.querySelector('.film-card__comments').addEventListener('click', () => {this._filmDetails.showDetail(this._filmData);});
+  _clickHandler(evt) {
+    evt.preventDefault();
+    this._callback.click(this._filmData);
+  }
+
+  setClickHandler(callback) {
+    this._callback.click = callback;
+    this.getElement().querySelector('img').addEventListener('click', this._clickHandler);
+    this.getElement().querySelector('.film-card__title').addEventListener('click', this._clickHandler);
+    this.getElement().querySelector('.film-card__comments').addEventListener('click', this._clickHandler);
   }
 
   _createFilmCardTemplate()  {
@@ -36,17 +45,5 @@ export default class FilmCard {
 
   getTemplate()  {
     return this._createFilmCardTemplate();
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
