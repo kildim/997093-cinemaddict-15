@@ -1,4 +1,3 @@
-import {createElement} from '../utils/utils.js';
 import Abstract from '../classes/abstract.js';
 
 const createUserProfileTemplate = (rank) => `<section class="header__profile profile">
@@ -27,17 +26,5 @@ export default class UserProfile extends Abstract {
 
   getTemplate()  {
     return createUserProfileTemplate(this.rank);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

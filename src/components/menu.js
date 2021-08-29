@@ -18,16 +18,19 @@ export default class Menu extends Abstract{
   // eslint-disable-next-line accessor-pairs
   set watchList(watchList) {
     this._watchList = watchList;
+    document.querySelectorAll('.main-navigation__item-count')[0].textContent = watchList;
   }
 
   // eslint-disable-next-line accessor-pairs
   set history(history) {
     this._history = history;
+    document.querySelectorAll('.main-navigation__item-count')[1].textContent = history;
   }
 
   // eslint-disable-next-line accessor-pairs
   set favorites(favorites) {
     this._favorites = favorites;
+    document.querySelectorAll('.main-navigation__item-count')[2].textContent = favorites;
   }
 
   _createMenuTemplate() {

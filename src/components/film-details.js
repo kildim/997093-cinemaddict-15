@@ -1,4 +1,4 @@
-import {parseFilmDetails} from '../utils/adapters.js';
+import {BLANK_FILM_DATA, parseFilmDetails} from '../utils/adapters.js';
 import Abstract from '../classes/abstract.js';
 
 const renderGenres = (genres) => genres.map((genre) => (`
@@ -8,30 +8,83 @@ const getActiveClass = (condition) => (condition ? 'film-details__control-button
 
 
 export default  class FilmDetails extends Abstract{
-  constructor() {
+  constructor(filmData = BLANK_FILM_DATA) {
     super();
-    this.showDetail = this._showDetail.bind(this);
-    this._onCloseClick = this.clearContent.bind(this);
+    this._filmData= filmData;
+    this._callback = {};
+
+    this._clickRemoveDetailHandler = this._clickRemoveDetailHandler.bind(this);
+
+    this._clickAddToWatchlistHandler = this._clickAddToWatchlistHandler.bind(this);
+    this._clickMarkAsWatchedHandler = this._clickMarkAsWatchedHandler.bind(this);
+    this._clickAddToFavoriteHandler = this._clickAddToFavoriteHandler.bind(this);
   }
 
-  _createFilmDetailsTemplate() {
-    return '<section class="film-details"></section>';
+  _clickRemoveDetailHandler(evt) {
+    evt.preventDefault();
+    this._callback.removeDetailCallBack(this._filmData);
   }
 
-  clearContent()  {
-    while (this._element.firstChild) {
-      this._element.removeChild(this._element.firstChild);
+  _clickAddToWatchlistHandler(evt) {
+    evt.preventDefault();
+    this._callback.clickAddToWatchlist(this._filmData);
+  }
+
+  _clickMarkAsWatchedHandler(evt) {
+    evt.preventDefault();
+    this._callback.clickMarkAsWatched(this._filmData);
+  }
+
+  _clickAddToFavoriteHandler(evt) {
+    evt.preventDefault();
+    this._callback.clickAddToFavorite(this._filmData);
+  }
+
+  toggleCardsAddToWatchlist(id) {
+    if (parseInt(this._filmData['id'], 10) === id ) {
+      this.getElement().querySelector('#watchlist').classList.toggle('film-details__control-button--active');
     }
   }
 
-  _createFormTemplate(filmData) {
+  toggleMarkAsWatched(id) {
+    if (parseInt(this._filmData['id'], 10) === id ) {
+      this.getElement().querySelector('#watched').classList.toggle('film-details__control-button--active');
+    }
+  }
+
+  toggleAddToFavorite(id) {
+    if (parseInt(this._filmData['id'], 10) === id ) {
+      this.getElement().querySelector('#favorite').classList.toggle('film-details__control-button--active');
+    }
+  }
+
+  setClickHandlers({
+    removeDetailCallBack = null,
+    addToWatchlistCallBack = null,
+    markAsWatchedCallBack = null,
+    addToFavoriteCallBack = null,
+  }) {
+    this._callback.removeDetailCallBack = removeDetailCallBack;
+    this._callback.clickAddToWatchlist = addToWatchlistCallBack;
+    this._callback.clickMarkAsWatched = markAsWatchedCallBack;
+    this._callback.clickAddToFavorite = addToFavoriteCallBack;
+
+    this.getElement().querySelector('.film-details__close-btn').addEventListener('click', this._clickRemoveDetailHandler);
+
+    this.getElement().querySelector('#watchlist').addEventListener('click', this._clickAddToWatchlistHandler);
+    this.getElement().querySelector('#watched').addEventListener('click', this._clickMarkAsWatchedHandler);
+    this.getElement().querySelector('#favorite').addEventListener('click', this._clickAddToFavoriteHandler);
+  }
+
+  _createFilmDetailsTemplate() {
     const {poster, ageRating, title, alternativeTitle, totalRating, director,
       writers, actors, releaseDate, runtime, releaseCountry, genres,
       description, watchList, watched, favorite,
       // comments,
-    } = parseFilmDetails(filmData);
+    } = parseFilmDetails(this._filmData);
 
     return `
+    <section class="film-details">
      <form class="film-details__inner" action="" method="get">
         <div class="film-details__top-container">
           <div class="film-details__close">
@@ -105,13 +158,8 @@ export default  class FilmDetails extends Abstract{
           </section>
         </div>
      </form>
+     </section>
 `;
-  }
-
-
-  _showDetail(film) {
-    this._element.innerHTML =  this._createFormTemplate(film);
-    this._element.querySelector('.film-details__close-btn').addEventListener('click', this._onCloseClick);
   }
 
   getTemplate()  {

@@ -46,6 +46,7 @@ const parseFilmCard = (filmData) => {
   const filmInfo = filmData['film_info'];
 
   return  {
+    id: filmData['id'],
     title: filmInfo['title'] || '',
     rating: filmInfo['total_rating'] || '',
     genre: extractFirstGenre(filmInfo['genre']) || '',
@@ -53,6 +54,9 @@ const parseFilmCard = (filmData) => {
     duration: formatTime(filmInfo['runtime']),
     description: truncateDescription(filmInfo['description']),
     comments: filmData['comments'],
+    watchlist: filmData['user_details']['watchlist'],
+    alreadyWatched: filmData['user_details']['already_watched'],
+    favorite: filmData['user_details']['favorite'],
   };
 };
 
