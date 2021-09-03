@@ -1,7 +1,7 @@
 import Enum from '../classes/enum.js';
 import dayjs from 'dayjs';
 import {getStats} from '../utils/statistics.js';
-import {isNotEmpty, render, RenderPlace, renderTemplate} from '../utils/utils';
+import {isEmpty, isNotEmpty, render, RenderPlace, renderTemplate} from '../utils/utils';
 import FilmsContentView from '../components/films-content';
 import FilmDetails from '../components/film-details';
 import FilmsListContainer from '../components/films-list-container';
@@ -10,11 +10,13 @@ import {createEmptyAllMooviesTemplate} from '../view/empty-all-movies';
 import CardsList from '../components/cards-list';
 import MenuView from '../components/menu.js';
 import SortView from '../components/sort.js';
+import {SORT_TYPE} from '../constants/sort-type';
 
 const FILTER_MODE = new Enum({all: 0, whatchlist: 1, favorites: 2, history: 3});
 const FILMS_LIST_DISPLAY_LIMIT = 5;
 const TOP_RATED_LIST_DISPLAY_LIMIT = 2;
 const MOST_COMMENTED_LIST_DISPLAY_LIMIT = 2;
+
 
 const getTopRatedList = (list) => (list.slice().sort((first, second) => second['film_info']['total_rating'] - first['film_info']['total_rating']));
 const getMostCommentedList = (list) =>  (list.slice().sort((first, second)=> second['comments'].length - first['comments'].length));
@@ -26,11 +28,10 @@ export default class MoviesListPresenter {
     this._footerElement = footerElement;
     this._films = films;
     this._stats = getStats(films);
-    this._filter = null;
     this._menuView = null;
     this._detail = null;
     this._filmsListContent = null;
-    this._mostCommentedListContent = null;
+    this._topRatedListContent = null;
     this._mostCommentedListContent = null;
     this._showDetail = this._showDetail.bind(this);
     this._addToWatchList = this._addToWatchList.bind(this);
@@ -93,81 +94,15 @@ export default class MoviesListPresenter {
     }
   }
 
-  _renderFilmsLists() {
-    if (this._filter === FILTER_MODE.all) {
-      if (isNotEmpty(this._films) ) {
-        render(this._mainElement, new FilmsContentView());
-
-        const [filmsList, topRatedList, mostCommentedList] = document.querySelectorAll('.films-list');
-
-        const filmsListContainer = new FilmsListContainer();
-        render(filmsList, filmsListContainer);
-
-        this._filmsListContent = new CardsList({
-          container:  filmsListContainer,
-          list: this._films,
-          chunkSize: FILMS_LIST_DISPLAY_LIMIT,
-          cardClickCallBacks: {
-            showDetailCallBack: this._showDetail,
-            addToWatchlistCallBack: this._addToWatchList,
-            markAsWatchedCallBack: this._markAsWatched,
-            addToFavoriteCallBack: this._addToFavorite,
-          },
-        });
-        this._filmsListContent.renderNextChunk();
-
-        const showMore = new ShowMore();
-        showMore.setClickHandler(this._filmsListContent.renderNextChunk);
-        render(filmsList, showMore);
-
-        const TOP_RATED_LIST = getTopRatedList(this._films).slice(0, TOP_RATED_LIST_DISPLAY_LIMIT);
-
-        const topRatedListContainer = new FilmsListContainer();
-        render(topRatedList, topRatedListContainer);
-
-        this._topRatedListContent = new CardsList({
-          container: topRatedListContainer,
-          list: TOP_RATED_LIST,
-          chunkSize: TOP_RATED_LIST_DISPLAY_LIMIT,
-          cardClickCallBacks: {
-            showDetailCallBack: this._showDetail,
-            addToWatchlistCallBack: this._addToWatchList,
-            markAsWatchedCallBack: this._markAsWatched,
-            addToFavoriteCallBack: this._addToFavorite,
-          },
-        });
-        this._topRatedListContent.renderNextChunk();
-
-        const MOST_COMMENTED_LIST = getMostCommentedList(this._films).slice(0, TOP_RATED_LIST_DISPLAY_LIMIT);
-
-        const mostCommentedListContainer = new FilmsListContainer();
-        render(mostCommentedList, mostCommentedListContainer);
-
-        this._mostCommentedListContent = new CardsList({
-          container: mostCommentedListContainer,
-          list: MOST_COMMENTED_LIST,
-          chunkSize: MOST_COMMENTED_LIST_DISPLAY_LIMIT,
-          cardClickCallBacks: {
-            showDetailCallBack: this._showDetail,
-            addToWatchlistCallBack: this._addToWatchList,
-            markAsWatchedCallBack: this._markAsWatched,
-            addToFavoriteCallBack: this._addToFavorite,
-          },
-        });
-        this._mostCommentedListContent.renderNextChunk();
-
-        const onEscKeyDown = (evt) => {
-          if (evt.key === 'Escape' || evt.key === 'Esc') {
-            evt.preventDefault();
-            this._removeDetail();
-          }
-        };
-
-        document.addEventListener('keydown', onEscKeyDown);
-      } else {
-        renderTemplate(this._mainElement, createEmptyAllMooviesTemplate());
-      }
-    }
+  _createCardsListContent({container, list, chunkSize, cardClickCallBacks}) {
+    const cardsListContent = new CardsList({
+      container:  container,
+      list: list,
+      chunkSize: chunkSize,
+      cardClickCallBacks: cardClickCallBacks,
+    });
+    cardsListContent.renderByDefault();
+    return cardsListContent;
   }
 
   _renderMenuView() {
@@ -178,12 +113,87 @@ export default class MoviesListPresenter {
     render(this._mainElement, this._sortView);
   }
 
+  // eslint-disable-next-line accessor-pairs
+  set _filter(filterMode) {
+    const [filmsList, topRatedList, mostCommentedList] = document.querySelectorAll('.films-list');
+    const filmsListContainer = new FilmsListContainer();
+    const topRatedListContainer = new FilmsListContainer();
+    const mostCommentedListContainer = new FilmsListContainer();
+    const showMore = new ShowMore();
+    const TOP_RATED_LIST = getTopRatedList(this._films).slice(0, TOP_RATED_LIST_DISPLAY_LIMIT);
+    const MOST_COMMENTED_LIST = getMostCommentedList(this._films).slice(0, TOP_RATED_LIST_DISPLAY_LIMIT);
+
+    switch (filterMode) {
+      case FILTER_MODE.all:
+        render(filmsList, filmsListContainer);
+
+        this._filmsListContent = this._createCardsListContent({
+          container:  filmsListContainer,
+          list: this._films,
+          chunkSize: FILMS_LIST_DISPLAY_LIMIT,
+          cardClickCallBacks: {
+            showDetailCallBack: this._showDetail,
+            addToWatchlistCallBack: this._addToWatchList,
+            markAsWatchedCallBack: this._markAsWatched,
+            addToFavoriteCallBack: this._addToFavorite,
+          },
+        });
+
+
+        showMore.setClickHandler(this._filmsListContent.renderNextChunk);
+        render(filmsList, showMore);
+
+        render(topRatedList, topRatedListContainer);
+
+        this._topRatedListContent = this._createCardsListContent({
+          container: topRatedListContainer,
+          list: TOP_RATED_LIST,
+          chunkSize: TOP_RATED_LIST_DISPLAY_LIMIT,
+          cardClickCallBacks: {
+            showDetailCallBack: this._showDetail,
+            addToWatchlistCallBack: this._addToWatchList,
+            markAsWatchedCallBack: this._markAsWatched,
+            addToFavoriteCallBack: this._addToFavorite,
+          },
+        });
+
+        render(mostCommentedList, mostCommentedListContainer);
+
+        this._mostCommentedListContent = this._createCardsListContent({
+          container: mostCommentedListContainer,
+          list: MOST_COMMENTED_LIST,
+          chunkSize: MOST_COMMENTED_LIST_DISPLAY_LIMIT,
+          cardClickCallBacks: {
+            showDetailCallBack: this._showDetail,
+            addToWatchlistCallBack: this._addToWatchList,
+            markAsWatchedCallBack: this._markAsWatched,
+            addToFavoriteCallBack: this._addToFavorite,
+          },
+        });
+        break;
+    }
+  }
+
+  _renderFilmsLists(filterMode) {
+    render(this._mainElement, new FilmsContentView());
+    isEmpty(this._films) ? renderTemplate(this._mainElement, createEmptyAllMooviesTemplate()) : this._filter = filterMode;
+
+    const onEscKeyDown = (evt) => {
+      if (evt.key === 'Escape' || evt.key === 'Esc') {
+        evt.preventDefault();
+        this._removeDetail();
+      }
+    };
+
+    document.addEventListener('keydown', onEscKeyDown);
+  }
+
   init() {
     this._menuView = new MenuView (this._stats);
     this._sortView = new SortView();
     this._renderMenuView();
     this._renderSortView();
-    this._filter = FILTER_MODE.all;
-    this._renderFilmsLists();
+    this._renderFilmsLists(FILTER_MODE.all);
   }
+
 }
