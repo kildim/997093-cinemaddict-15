@@ -1,7 +1,7 @@
 import Enum from '../classes/enum.js';
 import dayjs from 'dayjs';
 import {getStats} from '../utils/statistics.js';
-import {isEmpty, isNotEmpty, render, RenderPlace, renderTemplate} from '../utils/utils';
+import {isEmpty, render, RenderPlace, renderTemplate} from '../utils/utils';
 import FilmsContentView from '../components/films-content';
 import FilmDetails from '../components/film-details';
 import FilmsListContainer from '../components/films-list-container';
@@ -10,7 +10,6 @@ import {createEmptyAllMooviesTemplate} from '../view/empty-all-movies';
 import CardsList from '../components/cards-list';
 import MenuView from '../components/menu.js';
 import SortView from '../components/sort.js';
-import {SORT_TYPE} from '../constants/sort-type';
 
 const FILTER_MODE = new Enum({all: 0, whatchlist: 1, favorites: 2, history: 3});
 const FILMS_LIST_DISPLAY_LIMIT = 5;
@@ -138,7 +137,11 @@ export default class MoviesListPresenter {
             addToFavoriteCallBack: this._addToFavorite,
           },
         });
-
+        this._sortView.setClickHandlers({
+          sortByDefaultCallBack: this._filmsListContent.renderByDefault,
+          sortByDateCallBack: this._filmsListContent.renderByDate,
+          sortByRatingCallBack: this._filmsListContent.renderByRating,
+        });
 
         showMore.setClickHandler(this._filmsListContent.renderNextChunk);
         render(filmsList, showMore);

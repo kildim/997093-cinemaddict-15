@@ -1,4 +1,3 @@
-/* eslint-disable indent */
 import Card from './card';
 import {render} from '../utils/utils';
 import {SORT_TYPE} from '../constants/sort-type';
@@ -28,6 +27,7 @@ export default class CardsList {
 
   _renderByDefault() {
     if (this._sortType !== SORT_TYPE.byDefault) {
+      this._container.getElement().textContent = '';
       this._list = this._defaultList.slice();
       this._sortType = SORT_TYPE.byDefault;
       this._init();
@@ -37,6 +37,7 @@ export default class CardsList {
 
   _renderByDate() {
     if (this._sortType !== SORT_TYPE.byDate) {
+      this._container.getElement().textContent = '';
       this._sortType = SORT_TYPE.byDate;
       this._list.sort((film1, film2) => dayjs(film2['film_info']['release']['date']) - dayjs(film1['film_info']['release']['date']));
       this._init();
@@ -45,20 +46,19 @@ export default class CardsList {
   }
 
   _renderByRating() {
-    this._sortType = SORT_TYPE.byRating;
-    this._list.sort((film1, film2) => film2['film_info']['total_rating'] - film1['film_info']['total_rating']);
-    this._init();
-    this._renderNextChunk();
+    if (this._sortType !== SORT_TYPE.byRating) {
+      this._container.getElement().textContent = '';
+      this._sortType = SORT_TYPE.byRating;
+      this._list.sort((film1, film2) => film2['film_info']['total_rating'] - film1['film_info']['total_rating']);
+      this._init();
+      this._renderNextChunk();
+    }
   }
 
   _findCardById(id) {
     const cards = Array.from(this._container.getElement().querySelectorAll('.film-card'));
     return cards.find((card) => parseInt(card.dataset.id, 10) === id);
   }
-
-  // _getShownCards() {
-  //   return this._container.querySelectorAll('.film-card');
-  // }
 
   toggleCardsAddToWatchlist(id) {
     const card = this.findCardById(id);
