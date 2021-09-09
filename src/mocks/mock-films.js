@@ -2,7 +2,7 @@ import {getRandomInteger} from '../utils/utils.js';
 import {EMOTIONS} from '../constants/emotions.js';
 import dayjs from 'dayjs';
 
-const FILM_MOCKS_NUMBER = 13;
+const FILM_MOCKS_NUMBER = 3;
 const AGE_RATINGS = ['0+', '6+', '12+', '16+', '18+'];
 const TITLES = [
   'The Dance of Life',

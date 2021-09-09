@@ -7,7 +7,7 @@ import UserProfileView from './components/user-profile.js';
 
 import {getMockFilms} from './mocks/mock-films.js';
 import Footer from './components/footer.js';
-import MoviesListPresenter from './presenter/movies-list-presenter';
+import SiteContentPresenter from './presenters/site-content-presenter';
 
 const films = getMockFilms();
 
@@ -20,13 +20,13 @@ const getNumberOfWatched = (movies) => {
 const siteHeaderElement = document.querySelector('.header');
 const siteMainElement = document.querySelector('.main');
 const siteFooterElement = document.querySelector('.footer');
-const movieList = new MoviesListPresenter(siteMainElement, siteFooterElement, films);
+const siteContent = new SiteContentPresenter(siteMainElement, siteFooterElement, films);
 
 if (isNotEmpty(films)) {
   render(siteHeaderElement, new UserProfileView(getNumberOfWatched(films)));
 }
 
-movieList.init();
+siteContent.init();
 
 render(siteFooterElement, new Footer(films));
 

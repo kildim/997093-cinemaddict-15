@@ -7,7 +7,7 @@ import FilmDetails from '../components/film-details';
 import FilmsListContainer from '../components/films-list-container';
 import ShowMore from '../components/show-more';
 import {createEmptyAllMooviesTemplate} from '../view/empty-all-movies';
-import CardsList from '../components/cards-list';
+import CardsListPresenter from './cards-list-presenter';
 import MenuView from '../components/menu.js';
 import SortView from '../components/sort.js';
 
@@ -20,7 +20,7 @@ const MOST_COMMENTED_LIST_DISPLAY_LIMIT = 2;
 const getTopRatedList = (list) => (list.slice().sort((first, second) => second['film_info']['total_rating'] - first['film_info']['total_rating']));
 const getMostCommentedList = (list) =>  (list.slice().sort((first, second)=> second['comments'].length - first['comments'].length));
 
-export default class MoviesListPresenter {
+export default class SiteContentPresenter {
 
   constructor(mainElement, footerElement, films) {
     this._mainElement = mainElement;
@@ -94,7 +94,7 @@ export default class MoviesListPresenter {
   }
 
   _createCardsListContent({container, list, chunkSize, cardClickCallBacks}) {
-    const cardsListContent = new CardsList({
+    const cardsListContent = new CardsListPresenter({
       container:  container,
       list: list,
       chunkSize: chunkSize,
@@ -144,7 +144,9 @@ export default class MoviesListPresenter {
         });
 
         showMore.setClickHandler(this._filmsListContent.renderNextChunk);
-        render(filmsList, showMore);
+        if (this._films.length > FILMS_LIST_DISPLAY_LIMIT)  {
+          render(filmsList, showMore);
+        }
 
         render(topRatedList, topRatedListContainer);
 

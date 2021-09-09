@@ -1,7 +1,7 @@
 import {BLANK_FILM_DATA, parseFilmCard} from '../utils/adapters.js';
 import Abstract from '../classes/abstract.js';
 
-const getActiveClass = (condition) => (condition ? 'film-card__controls-item--active':'');
+const pickActiveClass = (condition) => (condition ? 'film-card__controls-item--active':'');
 
 export default class Card extends Abstract {
   constructor(filmData = BLANK_FILM_DATA) {
@@ -71,9 +71,9 @@ export default class Card extends Abstract {
       <p class="film-card__description">${description}</p>
       <a class="film-card__comments">${comments.length} comments</a>
       <div class="film-card__controls">
-        <button class="film-card__controls-item film-card__controls-item--add-to-watchlist ${getActiveClass(watchlist)}" type="button">Add to watchlist</button>
-        <button class="film-card__controls-item film-card__controls-item--mark-as-watched ${getActiveClass(alreadyWatched)}" type="button">Mark as watched</button>
-        <button class="film-card__controls-item film-card__controls-item--favorite ${getActiveClass(favorite)}" type="button">Mark as favorite</button>
+        <button class="film-card__controls-item film-card__controls-item--add-to-watchlist ${pickActiveClass(watchlist)}" type="button">Add to watchlist</button>
+        <button class="film-card__controls-item film-card__controls-item--mark-as-watched ${pickActiveClass(alreadyWatched)}" type="button">Mark as watched</button>
+        <button class="film-card__controls-item film-card__controls-item--favorite ${pickActiveClass(favorite)}" type="button">Mark as favorite</button>
       </div>
     </article>`;
   }
