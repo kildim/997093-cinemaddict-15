@@ -1,5 +1,3 @@
-import Card from '../components/card';
-import {render} from '../utils/utils';
 import {SORT_TYPE} from '../constants/sort-type';
 import dayjs from 'dayjs';
 import CardPresenter from './card-pesenter';
@@ -13,7 +11,6 @@ export default class CardsListPresenter {
     this._sortType = null;
     this._cardPresenters = new Map();
     this._cardClickCallBacks = cardClickCallBacks;
-    this.findCardById = this._findCardById.bind(this);
     this.renderNextChunk = this._renderNextChunk.bind(this);
     this.renderByDefault = this._renderByDefault.bind(this);
     this.renderByDate = this._renderByDate.bind(this);
@@ -56,36 +53,13 @@ export default class CardsListPresenter {
     }
   }
 
-  _findCardById(id) {
-    // const cards = Array.from(this._container.getElement().querySelectorAll('.film-card'));
-    // return cards.find((card) => parseInt(card.dataset.id, 10) === id);
-    return this._list.find((c) => c['id'] === id);
+  updateFilmCard(film) {
+    const cardPresenter = this._cardPresenters.get(film['id']);
+    if (cardPresenter) {
+      cardPresenter.updateCard();
+    }
   }
 
-  toggleCardsAddToWatchlist(id) {
-    const card = this.findCardById(id);
-    if (card !== undefined) {card.querySelector('.film-card__controls-item--add-to-watchlist')
-      .classList.toggle('film-card__controls-item--active');}
-  }
-
-  toggleMarkAsWatched(id) {
-    console.log(this._cardPresenters.get(id));
-    // if (card !== undefined) {card.textContent = card.getTemplate();}
-  }
-
-  toggleAddToFavorite(id) {
-    const card = this.findCardById(id);
-    if (card !== undefined) {card.querySelector('.film-card__controls-item--favorite')
-      .classList.toggle('film-card__controls-item--active');}
-  }
-
-  // _renderChunk(chunk) {
-  //   chunk.forEach((filmData) => {
-  //     const card = new Card(filmData);
-  //     card.setClickHandlers(this._cardClickCallBacks);
-  //     render(this._container, card);
-  //   });
-  // }
   _renderChunk(chunk) {
     chunk.forEach((filmData) => {
       const cardPresenter = new CardPresenter(this._container, filmData);

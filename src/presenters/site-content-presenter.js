@@ -1,15 +1,17 @@
 import Enum from '../classes/enum.js';
 import dayjs from 'dayjs';
 import {getStats} from '../utils/statistics.js';
-import {isEmpty, render, RenderPlace, renderTemplate} from '../utils/utils';
+import {isEmpty, render, renderTemplate} from '../utils/render';
 import FilmsContentView from '../components/films-content';
-import FilmDetails from '../components/film-details';
 import FilmsListContainer from '../components/films-list-container';
 import ShowMore from '../components/show-more';
-import {createEmptyAllMooviesTemplate} from '../view/empty-all-movies';
+import {createEmptyAllMooviesTemplate} from '../views/empty-all-movies';
 import CardsListPresenter from './cards-list-presenter';
 import MenuView from '../components/menu.js';
 import SortView from '../components/sort.js';
+import UserProfileView from '../components/user-profile';
+import Footer from '../components/footer';
+import DetailsPresenter from './details-presenter';
 
 const FILTER_MODE = new Enum({all: 0, whatchlist: 1, favorites: 2, history: 3});
 const FILMS_LIST_DISPLAY_LIMIT = 5;
@@ -22,16 +24,20 @@ const getMostCommentedList = (list) =>  (list.slice().sort((first, second)=> sec
 
 export default class SiteContentPresenter {
 
-  constructor(mainElement, footerElement, films) {
-    this._mainElement = mainElement;
-    this._footerElement = footerElement;
+  constructor(films) {
+    this._headerElement = document.querySelector('.header');
+    this._mainElement = document.querySelector('.main');
+    this._footerElement = document.querySelector('.footer');
     this._films = films;
     this._stats = getStats(films);
-    this._menuView = null;
     this._detail = null;
     this._filmsListContent = null;
     this._topRatedListContent = null;
     this._mostCommentedListContent = null;
+    this._filmsList = null;
+    this._topRatedList = null;
+    this._mostCommentedList =null;
+    this._filter = null;
     this._showDetail = this._showDetail.bind(this);
     this._addToWatchList = this._addToWatchList.bind(this);
     this._markAsWatched = this._markAsWatched.bind(this);
@@ -45,28 +51,28 @@ export default class SiteContentPresenter {
   }
 
   _showDetail(film) {
-    if (this._detail !== null) {
-      this._removeDetail();
-    }
-    this._detail =  new FilmDetails(film);
-    this._detail.setClickHandlers({
+    this._detail = this._detail || new DetailsPresenter(this._footerElement, film);
+    this._detail.init({
       removeDetailCallBack: this._removeDetail,
       addToWatchlistCallBack: this._addToWatchList,
       markAsWatchedCallBack: this._markAsWatched,
       addToFavoriteCallBack: this._addToFavorite,
     });
-    render(this._footerElement, this._detail, RenderPlace.AFTER_END);
+  }
+
+  _updateFilmCards(film) {
+    this._filmsListContent.updateFilmCard(film);
+    this._topRatedListContent.updateFilmCard(film);
+    this._mostCommentedListContent.updateFilmCard(film);
+    if (this._detail !== null) {
+      this._detail.updateFilmCard(film);
+    }
   }
 
   _addToWatchList(film) {
     film['user_details']['watchlist'] = !film['user_details']['watchlist'];
     this._menuView.watchList = getStats(this._films).watchList;
-    this._filmsListContent.toggleCardsAddToWatchlist(film['id']);
-    this._topRatedListContent.toggleCardsAddToWatchlist(film['id']);
-    this._mostCommentedListContent.toggleCardsAddToWatchlist(film['id']);
-    if (this._detail !== null) {
-      this._detail.toggleCardsAddToWatchlist(film['id']);
-    }
+    this._updateFilmCards(film);
   }
 
   _markAsWatched(film) {
@@ -74,23 +80,13 @@ export default class SiteContentPresenter {
     film['user_details']['watching_date'] = film['user_details']['already_watched'] ?
       dayjs().format('YYYY-MM-DD HH:mm:ss') : '';
     this._menuView.history = getStats(this._films).history;
-    this._filmsListContent.toggleMarkAsWatched(film['id']);
-    this._topRatedListContent.toggleMarkAsWatched(film['id']);
-    this._mostCommentedListContent.toggleMarkAsWatched(film['id']);
-    if (this._detail !== null) {
-      this._detail.toggleMarkAsWatched(film['id']);
-    }
+    this._updateFilmCards(film);
   }
 
   _addToFavorite(film) {
     film['user_details']['favorite'] = !film['user_details']['favorite'];
     this._menuView.favorites = getStats(this._films).favorites;
-    this._filmsListContent.toggleAddToFavorite(film['id']);
-    this._topRatedListContent.toggleAddToFavorite(film['id']);
-    this._mostCommentedListContent.toggleAddToFavorite(film['id']);
-    if (this._detail !== null) {
-      this._detail.toggleAddToFavorite(film['id']);
-    }
+    this._updateFilmCards(film);
   }
 
   _createCardsListContent({container, list, chunkSize, cardClickCallBacks}) {
@@ -104,17 +100,58 @@ export default class SiteContentPresenter {
     return cardsListContent;
   }
 
-  _renderMenuView() {
-    render(this._mainElement, this._menuView);
+  _renderMenuView(container) {
+    this._menuView = this._menuView || new MenuView (this._stats);
+    render(container, this._menuView);
   }
 
-  _renderSortView() {
-    render(this._mainElement, this._sortView);
+  _renderFooterView(container) {
+    render(container, new Footer(this._films));
+  }
+
+  _renderSortView(container) {
+    this._sortView = this._sortView || new SortView();
+    render(container, this._sortView);
+  }
+
+  _renderUserProfileView(container) {
+    render(container, new UserProfileView(this.getNumberOfWatched(this._films)));
+  }
+
+  _renderNoFilmsContent() {
+    renderTemplate(this._mainElement, createEmptyAllMooviesTemplate());
+  }
+
+  _renderFilmsContentView(container) {
+    render(container, new FilmsContentView());
+  }
+
+  _getFilmLists() {
+    return document.querySelectorAll('.films-list');
+  }
+
+  _setEscKeyDownListener() {
+    const onEscKeyDown = (evt) => {
+      if (evt.key === 'Escape' || evt.key === 'Esc') {
+        evt.preventDefault();
+        this._removeDetail();
+      }
+    };
+
+    document.addEventListener('keydown', onEscKeyDown);
+  }
+
+  _renderHaveFilmsContent() {
+    this._renderUserProfileView(this._headerElement);
+    this._renderSortView(this._mainElement);
+    this._renderFilmsContentView(this._mainElement);
+    this._renderFilteredLists(FILTER_MODE.all);
+    this._setEscKeyDownListener();
   }
 
   // eslint-disable-next-line accessor-pairs
-  set _filter(filterMode) {
-    const [filmsList, topRatedList, mostCommentedList] = document.querySelectorAll('.films-list');
+  _renderFilteredLists(filterMode) {
+    const [filmsList, topRatedList, mostCommentedList] = this._getFilmLists();
     const filmsListContainer = new FilmsListContainer();
     const topRatedListContainer = new FilmsListContainer();
     const mostCommentedListContainer = new FilmsListContainer();
@@ -179,26 +216,16 @@ export default class SiteContentPresenter {
     }
   }
 
-  _renderFilmsLists(filterMode) {
-    render(this._mainElement, new FilmsContentView());
-    isEmpty(this._films) ? renderTemplate(this._mainElement, createEmptyAllMooviesTemplate()) : this._filter = filterMode;
-
-    const onEscKeyDown = (evt) => {
-      if (evt.key === 'Escape' || evt.key === 'Esc') {
-        evt.preventDefault();
-        this._removeDetail();
-      }
-    };
-
-    document.addEventListener('keydown', onEscKeyDown);
+  getNumberOfWatched(movies) {
+    let counter = 0;
+    for (const film of movies) {if (film['user_details']['already_watched']) {counter++;}}
+    return counter;
   }
 
   init() {
-    this._menuView = new MenuView (this._stats);
-    this._sortView = new SortView();
-    this._renderMenuView();
-    this._renderSortView();
-    this._renderFilmsLists(FILTER_MODE.all);
+    this._renderMenuView(this._mainElement);
+    isEmpty(this._films) ? this._renderNoFilmsContent() : this._renderHaveFilmsContent();
+    this._renderFooterView(this._footerElement);
   }
 
 }
